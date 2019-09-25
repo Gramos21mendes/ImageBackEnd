@@ -10,9 +10,8 @@ namespace Service.Interfaces
     public interface IImageService
     {
         Task<HttpStatusCode> SaveImage();
-
+        Task<HttpStatusCode> SaveImages();
         Task<IEnumerable<Image>> ListImages();
-
         HttpResponseMessage DownloadImageById(Guid id, HttpResponseMessage response);
     }
 }

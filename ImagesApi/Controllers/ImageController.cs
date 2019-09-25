@@ -33,6 +33,15 @@ namespace ImagesApi.Controllers
             return Request.CreateResponse(await imageService.SaveImage());
         }
 
+
+        [HttpPost]
+        [Route("uploadImages")]
+        public async Task<HttpResponseMessage> UploadImages()
+        {
+            return Request.CreateResponse(await imageService.SaveImages());
+        }
+
+
         [HttpGet]
         [Route("listImages")]
         public async Task<IEnumerable<Image>> ListImages()

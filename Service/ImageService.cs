@@ -75,5 +75,10 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
         }
+
+        public Task<HttpStatusCode> SaveImages()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
