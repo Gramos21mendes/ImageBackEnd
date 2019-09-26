@@ -10,5 +10,6 @@ namespace Repository.Interfaces
         Task SaveImage(Image image);
         Task<IEnumerable<Image>> ListImages();
         Image GetImageById(Guid id);
+        IEnumerable<Image> GetImagesById(Guid[] ids);
     }
 }

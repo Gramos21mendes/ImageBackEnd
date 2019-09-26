@@ -27,20 +27,11 @@ namespace ImagesApi.Controllers
 
 
         [HttpPost]
-        [Route("upload")]
+        [Route("uploadImage")]
         public async Task<HttpResponseMessage> UploadImage()
         {
             return Request.CreateResponse(await imageService.SaveImage());
         }
-
-
-        [HttpPost]
-        [Route("uploadImages")]
-        public async Task<HttpResponseMessage> UploadImages()
-        {
-            return Request.CreateResponse(await imageService.SaveImages());
-        }
-
 
         [HttpGet]
         [Route("listImages")]
@@ -54,6 +45,13 @@ namespace ImagesApi.Controllers
         public HttpResponseMessage DownloadImage(Guid id)
         {
             return imageService.DownloadImageById(id, Request.CreateResponse());
+        }
+
+        [HttpPost]
+        [Route("downloadImages")]
+        public HttpResponseMessage DownloadImages(Guid[] ids)
+        {
+            return imageService.DownloadImages(ids, Request.CreateResponse());
         }
     }
 }

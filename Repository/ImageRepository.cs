@@ -26,6 +26,11 @@ namespace Repository
             return dataContext.Connection.Query<Image>("SELECT * FROM Images", commandType: CommandType.Text).FirstOrDefault();
         }
 
+        public IEnumerable<Image> GetImagesById(Guid[] ids)
+        {
+            return dataContext.Connection.Query<Image>("SELECT * FROM Images WHERE Id IN @Ids", new { Ids = ids }, commandType: CommandType.Text);
+        }
+
         public async Task<IEnumerable<Image>> ListImages()
         {
             return await dataContext.Connection.QueryAsync<Image>("SELECT * FROM Images", commandType: CommandType.Text);
