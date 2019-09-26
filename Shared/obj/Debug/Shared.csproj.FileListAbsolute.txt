@@ -1,0 +1,6 @@
+C:\GitHub_Guilherme\ImagesBackEnd\Shared\bin\Debug\Shared.dll
+C:\GitHub_Guilherme\ImagesBackEnd\Shared\bin\Debug\Shared.pdb
+C:\GitHub_Guilherme\ImagesBackEnd\Shared\obj\Debug\Shared.csprojAssemblyReference.cache
+C:\GitHub_Guilherme\ImagesBackEnd\Shared\obj\Debug\Shared.csproj.CoreCompileInputs.cache
+C:\GitHub_Guilherme\ImagesBackEnd\Shared\obj\Debug\Shared.dll
+C:\GitHub_Guilherme\ImagesBackEnd\Shared\obj\Debug\Shared.pdb

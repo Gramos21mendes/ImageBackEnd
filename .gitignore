@@ -71,6 +71,7 @@ artifacts/
 *.svclog
 *.scc
 *.jpeg
+*.config
 
 # Chutzpah Test files
 _Chutzpah*
