@@ -4,6 +4,7 @@ using Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -49,6 +50,34 @@ namespace Service
             return response;
         }
 
+        public HttpResponseMessage DownloadImages(Guid[] ids, HttpResponseMessage response)
+        {
+            var images = imageRepository.GetImagesById(ids);
+
+            if (images.Count() > 0)
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                    {
+                        foreach (var image in images)
+                        {
+                            var zipArchive = archive.CreateEntryFromFile(image.ImagePath, image.ImageName, CompressionLevel.Fastest);
+                            using (var zipStream = zipArchive.Open())
+                            {
+                                var file = File.ReadAllBytes(image.ImagePath);
+                                zipStream.Write(file, 0, file.Length);
+                            }
+                        }
+                    }
+
+                    response.Content = new StreamContent(ms);
+                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
+                }
+            }
+            return response;
+        }
+
         public async Task<IEnumerable<Image>> ListImages()
         {
             return await imageRepository.ListImages();
@@ -76,9 +105,5 @@ namespace Service
             }
         }
 
-        public Task<HttpStatusCode> SaveImages()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
