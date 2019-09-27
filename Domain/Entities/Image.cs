@@ -32,7 +32,8 @@ namespace Domain.Entities
 
         public string AlterateToVirtualPath(string path)
         {
-            return $"{ConfigurationManager.AppSettings["VirtualPath"]}{path.Substring(path.LastIndexOf("\\Image") + 1)}";
+            //return $"{ConfigurationManager.AppSettings["VirtualPath"]}{path.Substring(path.LastIndexOf("\\Image") + 1)}";
+            return $"{ConfigurationManager.AppSettings["VirtualPathHome"]}{path.Substring(path.LastIndexOf("\\Image") + 1)}";
         }
 
     }

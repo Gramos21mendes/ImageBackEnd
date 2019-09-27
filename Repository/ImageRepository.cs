@@ -23,7 +23,7 @@ namespace Repository
         public Image GetImageById(Guid id)
         {
 
-            return dataContext.Connection.Query<Image>("SELECT * FROM Images", commandType: CommandType.Text).FirstOrDefault();
+            return dataContext.Connection.Query<Image>("SELECT * FROM Images WHERE Id = @Id", new { Id = id}, commandType: CommandType.Text).FirstOrDefault();
         }
 
         public IEnumerable<Image> GetImagesById(Guid[] ids)

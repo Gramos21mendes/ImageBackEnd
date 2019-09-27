@@ -11,7 +11,7 @@ namespace Service.Interfaces
     {
         Task<HttpStatusCode> SaveImage();
         Task<IEnumerable<Image>> ListImages();
-        HttpResponseMessage DownloadImageById(Guid id, HttpResponseMessage response);
-        HttpResponseMessage DownloadImages(Guid[] ids, HttpResponseMessage response);
+        HttpResponseMessage DownloadImageById(Guid id);
+        HttpResponseMessage DownloadImages(Guid[] ids);
     }
 }

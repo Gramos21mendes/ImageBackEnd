@@ -1,10 +1,10 @@
 ﻿using Domain.Entities;
+using Ionic.Zip;
 using Repository.Interfaces;
 using Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -22,18 +22,28 @@ namespace Service
             this.imageRepository = imageRepository;
         }
 
-        public HttpResponseMessage DownloadImageById(Guid id, HttpResponseMessage response)
+        public HttpResponseMessage DownloadImageById(Guid id)
         {
             var image = imageRepository.GetImageById(id);
 
             if (image != null)
             {
-                //Byte[] data = File.ReadAllBytes(image.ImagePath);
+                var result = new HttpResponseMessage(HttpStatusCode.OK);
 
-                var stream = new FileStream(image.ImagePath, FileMode.Open);
-                //Set the Response Content.
-                response.Content = new StreamContent(stream);
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue(image.ContentType);
+                var fileName = image.ImageVirtualPath.Substring(image.ImageVirtualPath.LastIndexOf("\\") + 1);
+                var filePath = HttpContext.Current.Server.MapPath($"~/Image/{fileName}");
+
+                var fileBytes = File.ReadAllBytes(filePath);
+
+                var fileMemStream = new MemoryStream(fileBytes);
+
+                result.Content = new StreamContent(fileMemStream);
+                var headers = result.Content.Headers;
+                headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                headers.ContentDisposition.FileName = fileName;
+
+                //headers.ContentType = new MediaTypeHeaderValue(image.ContentType);
+                headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
                 // Photo.Resize is a static method to resize the image
                 //Image img = Photo.Resize(Image.FromFile(@"d:\path\" + source), width, height);
@@ -46,36 +56,43 @@ namespace Service
 
                 //httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
                 //httpResponseMessage.StatusCode = HttpStatusCode.O
+                return result;
             }
-            return response;
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
 
-        public HttpResponseMessage DownloadImages(Guid[] ids, HttpResponseMessage response)
+        public HttpResponseMessage DownloadImages(Guid[] ids)
         {
             var images = imageRepository.GetImagesById(ids);
 
             if (images.Count() > 0)
             {
-                using (MemoryStream ms = new MemoryStream())
+                var result = new HttpResponseMessage(HttpStatusCode.OK);
+                MemoryStream outPutStream = new MemoryStream();
+
+                using (ZipFile zip = new ZipFile())
                 {
-                    using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                    foreach (var image in images)
                     {
-                        foreach (var image in images)
-                        {
-                            var zipArchive = archive.CreateEntryFromFile(image.ImagePath, image.ImageName, CompressionLevel.Fastest);
-                            using (var zipStream = zipArchive.Open())
-                            {
-                                var file = File.ReadAllBytes(image.ImagePath);
-                                zipStream.Write(file, 0, file.Length);
-                            }
-                        }
+                        var fileName = image.ImageVirtualPath.Substring(image.ImageVirtualPath.LastIndexOf("\\") + 1);
+                        var filePath = HttpContext.Current.Server.MapPath($"~/Image/{fileName}");
+                        zip.AddFile(filePath, $"Images_" + DateTime.Now);
                     }
 
-                    response.Content = new StreamContent(ms);
-                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
+                    zip.CompressionMethod = CompressionMethod.BZip2;
+                    zip.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
+                    zip.Save(outPutStream);
                 }
+
+                result.Content = new StreamContent(outPutStream);
+                var headers = result.Content.Headers;
+                outPutStream.Position = 0;
+                headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                headers.ContentDisposition.FileName = "zipPictures";
+                headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                return result;
             }
-            return response;
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
 
         public async Task<IEnumerable<Image>> ListImages()

@@ -44,14 +44,15 @@ namespace ImagesApi.Controllers
         [Route("downloadImage/{id}")]
         public HttpResponseMessage DownloadImage(Guid id)
         {
-            return imageService.DownloadImageById(id, Request.CreateResponse());
+            return imageService.DownloadImageById(id);
         }
 
         [HttpPost]
         [Route("downloadImages")]
         public HttpResponseMessage DownloadImages(Guid[] ids)
         {
-            return imageService.DownloadImages(ids, Request.CreateResponse());
+            //Passar create response para service.
+            return imageService.DownloadImages(ids);
         }
     }
 }
